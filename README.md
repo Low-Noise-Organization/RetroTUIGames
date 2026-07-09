@@ -291,3 +291,4 @@ Contributions are welcome. Open an issue or pull request on GitHub.
 ---
 
 *Made with Rust and retro spirit.*
+
