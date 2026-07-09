@@ -1,6 +1,6 @@
 <table width="100%">
 <tr>
-<td align="left" valign="top" width="15%">
+<td align="center" valign="top" width="15%">
 
 <img src="assets/images/Low_Noise_Logo.png"
      alt="Low Noise"
