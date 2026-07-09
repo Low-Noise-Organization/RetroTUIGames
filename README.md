@@ -1,6 +1,7 @@
+
+<source media="(prefers-color-scheme: dark)" srcset="/assets/images/RetroTUI_Logo.png" width="100">
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="/assets/images/RetroTUI_Logo.png">
-  <img src="/assets/images/Low_Noise_Logo.png" alt="RETRO HUB Logo" width="600">
+  <source media="(prefers-color-scheme: dark)" srcset="/assets/images/RetroTUI_Logo.png" width="400">
 </picture>
 
 # RETRO HUB
