@@ -1,9 +1,30 @@
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/images/RetroTUI_Logo.png">
+<p align="left">
+  <img src="assets/images/Low_Noise_Logo.png"
+       alt="Low Noise"
+       width="90">
+</p>
+
+<p align="center">
   <img src="assets/images/RetroTUI_Logo.png"
        alt="RetroTUI Games"
        width="400">
-</picture>
+</p>
+
+<h1 align="center">
+RetroTUI Games
+</h1>
+
+<p align="center">
+<b>A retro gaming arcade machine inside your terminal.</b>
+</p>
+
+<p align="center">
+
+Minimal. Fast. Native. Terminal.
+
+Built by <b>Low Noise</b>.
+
+</p>
 
 # RETRO HUB
 
