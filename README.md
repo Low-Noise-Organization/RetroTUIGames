@@ -7,7 +7,7 @@
 <p align="center">
   <img src="assets/images/RetroTUI_Logo.png"
        alt="RetroTUI Games"
-       width="700">
+       width="400">
 </p>
 
 <h1 align="center">
