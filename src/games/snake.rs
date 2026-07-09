@@ -37,14 +37,17 @@ impl SnakeGame {
     fn spawn_food(&mut self) {
         use rand::Rng;
         let mut rng = rand::thread_rng();
+        let fw = self.w.saturating_sub(2);
+        let fh = self.h.saturating_sub(2);
+        if fw < 1 || fh < 1 { self.game_over = true; return; }
         let max_attempts = 1000;
         for _ in 0..max_attempts {
-            let fx = rng.gen_range(1..self.w.saturating_sub(1));
-            let fy = rng.gen_range(1..self.h.saturating_sub(1));
+            let fx = rng.gen_range(1..=fw);
+            let fy = rng.gen_range(1..=fh);
             if !self.snake.contains(&(fx, fy)) { self.food = (fx, fy); return; }
         }
-        for fy in 1..self.h.saturating_sub(1) {
-            for fx in 1..self.w.saturating_sub(1) {
+        for fy in 1..=fh {
+            for fx in 1..=fw {
                 if !self.snake.contains(&(fx, fy)) { self.food = (fx, fy); return; }
             }
         }
@@ -75,8 +78,9 @@ impl Scene for SnakeGame {
         if nx >= self.w || ny >= self.h || self.snake.contains(&(nx, ny)) { self.game_over = true; return; }
         self.snake.insert(0, (nx, ny));
         if nx == self.food.0 && ny == self.food.1 {
-            self.score += 10 * self.level; self.growing = true;
-            if self.snake.len() % 5 == 0 { self.level += 1; self.move_interval = (self.move_interval - 0.02).max(0.08); }
+            self.score += self.level * 10; self.growing = true;
+            self.level += 1;
+            self.move_interval = (self.move_interval * 0.94).max(0.06);
             self.spawn_food();
         }
         if !self.growing { self.snake.pop(); }

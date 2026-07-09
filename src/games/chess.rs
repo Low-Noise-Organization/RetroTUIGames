@@ -21,9 +21,9 @@ fn mk(t: u8, c: u8) -> u8 { t | c }
 
 fn piece_symbol(piece: u8) -> &'static str {
     match piece {
-        9 => "♙", 10 => "♘", 11 => "♗", 12 => "♖", 13 => "♕", 14 => "♔",
-        17 => "♟", 18 => "♞", 19 => "♝", 20 => "♜", 21 => "♛", 22 => "♚",
-        _ => "·",
+        9 => "P", 10 => "N", 11 => "B", 12 => "R", 13 => "Q", 14 => "K",
+        17 => "p", 18 => "n", 19 => "b", 20 => "r", 21 => "q", 22 => "k",
+        _ => ".",
     }
 }
 
@@ -833,12 +833,16 @@ impl Scene for ChessGame {
 
         renderer::fill_rect(buf, area, c.bg);
 
-        let board_width: i32 = 19;
-        let board_height: i32 = 9;
+        let board_width: i32 = 10;
+        let board_height: i32 = 10;
         let avail_w = area.width.min(self.width);
         let avail_h = area.height.min(self.height);
+        if avail_w < board_width as u16 + 4 || avail_h < board_height as u16 + 4 {
+            draw_text(buf, area.x + 1, area.y + 1, "Terminal too small for chess", c.error, c.bg);
+            return;
+        }
         let bx = area.x as i32 + (avail_w as i32 - board_width) / 2;
-        let by = area.y as i32 + (avail_h as i32 - board_height) / 2;
+        let by = area.y as i32 + (avail_h as i32 - board_height - 2) / 2;
 
         let light_sq = Color::Rgb(240, 217, 181);
         let dark_sq = Color::Rgb(181, 136, 99);
@@ -847,18 +851,14 @@ impl Scene for ChessGame {
 
         for y in 0..8 {
             for x in 0..8 {
-                let sx = (bx + 2 + (x as i32) * 2) as u16;
+                let sx = (bx + x as i32) as u16;
                 let sy = (by + y as i32) as u16;
                 let is_light = (x + y) % 2 == 0;
                 let mut bg = if is_light { light_sq } else { dark_sq };
 
                 if let Some((fx, fy, tx, ty)) = self.last_move {
-                    if x == fx && y == fy {
-                        bg = Color::Rgb(205, 180, 100);
-                    }
-                    if x == tx && y == ty {
-                        bg = Color::Rgb(205, 180, 100);
-                    }
+                    if x == fx && y == fy { bg = Color::Rgb(205, 180, 100); }
+                    if x == tx && y == ty { bg = Color::Rgb(205, 180, 100); }
                 }
 
                 if x == self.cursor_x && y == self.cursor_y {
@@ -867,19 +867,6 @@ impl Scene for ChessGame {
 
                 if self.selected && x == self.sel_x && y == self.sel_y {
                     bg = Color::Rgb(255, 220, 80);
-                }
-
-                if self.selected {
-                    let p = self.board[self.sel_y][self.sel_x];
-                    if p != EMPTY && is_c(p, self.turn) {
-                        let legal = self.generate_legal_moves(self.turn);
-                        let can_move_to = legal.iter().any(|lm| lm.to == (x, y));
-                        if can_move_to {
-                            if self.board[y][x] != EMPTY {
-                                bg = Color::Rgb(200, 80, 80);
-                            }
-                        }
-                    }
                 }
 
                 let piece = self.board[y][x];
@@ -892,15 +879,14 @@ impl Scene for ChessGame {
                 };
 
                 set_char(buf, sx, sy, ' ', c.bg, bg);
-                set_char(buf, sx + 1, sy, ' ', c.bg, bg);
 
                 if piece != EMPTY {
-                    let sym = piece_symbol(piece).chars().next().unwrap_or('·');
+                    let sym = piece_symbol(piece).chars().next().unwrap_or('.');
                     set_char(buf, sx, sy, sym, fg, bg);
                 } else if self.selected {
                     let legal = self.generate_legal_moves(self.turn);
                     if legal.iter().any(|lm| lm.to == (x, y)) {
-                        set_char(buf, sx, sy, '◉', Color::Rgb(80, 80, 80), bg);
+                        set_char(buf, sx, sy, '+', c.info, bg);
                     }
                 }
             }
@@ -910,28 +896,33 @@ impl Scene for ChessGame {
         for y in 0..8 {
             let rank = (8 - y).to_string();
             let label_y = (by + y as i32) as u16;
-            draw_text(buf, (bx - 2) as u16, label_y, &format!("{} ", rank), c.fg, c.bg);
-            draw_text(buf, (bx + 2 + 8 * 2 + 1) as u16, label_y, &format!(" {}", rank), c.fg, c.bg);
+            draw_text(buf, (bx - 1) as u16, label_y, &rank, c.fg, c.bg);
+            draw_text(buf, (bx + 9) as u16, label_y, &rank, c.fg, c.bg);
         }
 
         for x in 0..8 {
-            let label_x = (bx + 2 + (x as i32) * 2) as u16;
+            let label_x = (bx + x as i32) as u16;
             draw_text(buf, label_x, (by + 8) as u16, &file_chars[x].to_string(), c.fg, c.bg);
         }
 
         let turn_text = if self.turn == WHITE { "White's turn" } else { "Black's turn (AI)" };
-        draw_text(buf, (bx + 2) as u16, (by - 2) as u16, turn_text, c.accent, c.bg);
+        draw_text(buf, bx as u16, (by - 1) as u16, turn_text, c.accent, c.bg);
 
         if !self.message.is_empty() {
             let msg_color = if self.game_over { c.error } else { c.warning };
-            draw_text(buf, (bx + 2) as u16, (by - 1) as u16, &self.message, msg_color, c.bg);
+            draw_text(buf, bx as u16, (by - 2) as u16, &self.message, msg_color, c.bg);
         }
 
-        let panel_x = (bx + board_width + 3) as u16;
+        let controls_y = (by + 9) as u16;
+        if controls_y < area.y + avail_h {
+            draw_text(buf, bx as u16, controls_y, "Arrows: Move | Enter: Sel/Move | ESC: Exit", c.disabled, c.bg);
+        }
+
+        let panel_x = (bx + 11) as u16;
         let panel_y = by as u16;
         let max_visible = (area.y + avail_h).saturating_sub(panel_y + 1) as usize;
 
-        draw_text(buf, panel_x, panel_y, "── Moves ──", c.border, c.bg);
+        draw_text(buf, panel_x, panel_y, "Moves", c.border, c.bg);
         let history_start = if self.history.len() > max_visible {
             self.history.len() - max_visible
         } else {
@@ -951,11 +942,6 @@ impl Scene for ChessGame {
             } else {
                 break;
             }
-        }
-
-        let controls_y = (by + board_height + 1) as u16;
-        if controls_y < area.y + avail_h {
-            draw_text(buf, (bx + 2) as u16, controls_y, "Arrows: Move cursor | Enter: Select/Move | ESC: Exit", c.disabled, c.bg);
         }
     }
 

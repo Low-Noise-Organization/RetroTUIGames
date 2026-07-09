@@ -51,6 +51,8 @@ pub struct BreakoutGame {
     power_ups: Vec<PowerUp>,
     wide_timer: f32,
     speed: f32,
+    visible_w: u16,
+    visible_h: u16,
 }
 
 impl BreakoutGame {
@@ -75,11 +77,13 @@ impl BreakoutGame {
             power_ups: Vec::new(),
             wide_timer: 0.0,
             speed: 1.0,
+            visible_w: 80,
+            visible_h: 24,
         }
     }
 
     fn paddle_y(&self) -> u16 {
-        self.h.saturating_sub(2)
+        self.visible_h.saturating_sub(2)
     }
 
     fn brick_y(row: u16) -> u16 {
@@ -143,9 +147,9 @@ impl BreakoutGame {
     fn launch_ball(&mut self) {
         self.ball_launched = true;
         for ball in &mut self.balls {
-            let angle = (rand::random::<f32>() - 0.5) * std::f32::consts::PI * 0.6;
-            ball.vx = angle.sin() * 1.5;
-            ball.vy = -angle.cos().abs() * 1.5;
+            let angle = (rand::random::<f32>() - 0.5) * std::f32::consts::PI * 0.4;
+            ball.vx = angle.sin() * 0.8;
+            ball.vy = -angle.cos().abs() * 0.8;
         }
     }
 
@@ -227,6 +231,8 @@ impl Scene for BreakoutGame {
         self.paused = false;
         self.power_ups.clear();
         self.wide_timer = 0.0;
+        self.visible_w = self.w;
+        self.visible_h = self.h;
         self.reset_level();
         self.reset_balls();
     }
@@ -280,7 +286,7 @@ impl Scene for BreakoutGame {
             }
         }
 
-        let dt_factor = dt * 60.0 * self.speed;
+        let dt_factor = dt * 60.0 * self.speed * 0.7;
         let mut dead_balls: Vec<usize> = Vec::new();
         let mut power_spawns: Vec<(f32, f32)> = Vec::new();
 
@@ -381,7 +387,10 @@ impl Scene for BreakoutGame {
 
     fn render(&mut self, frame: &mut Frame, engine: &Engine, area: Rect) {
         let buf = frame.buffer_mut();
-        let (w, h) = (self.w.min(area.width), self.h.min(area.height));
+        self.visible_w = self.w.min(area.width);
+        self.visible_h = self.h.min(area.height);
+        let (w, h) = (self.visible_w, self.visible_h);
+        if w < 10 || h < 5 { return; }
         let c = engine.theme.colors();
         let ox = area.x + (area.width.saturating_sub(w)) / 2;
         let oy = area.y + (area.height.saturating_sub(h)) / 2;
@@ -446,8 +455,14 @@ impl Scene for BreakoutGame {
 
     fn handle_key(&mut self, key: i32, _ch: char) {
         match key {
-            37 => { self.paddle_x = self.paddle_x.saturating_sub(2); }
-            39 => { self.paddle_x = (self.paddle_x + 2).min(self.w.saturating_sub(self.paddle_w)); }
+            37 | 97 | 65 => {
+                let step = if self.ball_launched { 3 } else { 2 };
+                self.paddle_x = self.paddle_x.saturating_sub(step);
+            }
+            39 | 100 | 68 => {
+                let step = if self.ball_launched { 3 } else { 2 };
+                self.paddle_x = (self.paddle_x + step).min(self.visible_w.saturating_sub(self.paddle_w));
+            }
             32 => {
                 if self.game_over { self.init(); }
                 else if !self.ball_launched { self.launch_ball(); }

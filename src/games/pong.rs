@@ -13,24 +13,27 @@ pub struct PongGame {
     ai: bool,
     game_over: bool, paused: bool,
     w: u16, h: u16,
+    ai_timer: f32,
 }
 
 impl PongGame {
     pub fn new() -> Self {
         Self {
             id: "pong".into(), paddle1_y: 10, paddle2_y: 10,
-            ball_x: 40.0, ball_y: 12.0, ball_vx: 1.0, ball_vy: 0.5,
+            ball_x: 40.0, ball_y: 12.0, ball_vx: 1.2, ball_vy: 0.6,
             score1: 0, score2: 0, speed: 1.0, ai: true,
             game_over: false, paused: false, w: 80, h: 24,
+            ai_timer: 0.0,
         }
     }
 
     fn reset_ball(&mut self) {
-        let angle = (rand::random::<f32>() - 0.5) * std::f32::consts::PI / 3.0;
+        let angle = (rand::random::<f32>() - 0.5) * std::f32::consts::PI / 4.0;
         self.ball_x = self.w as f32 / 2.0;
         self.ball_y = self.h as f32 / 2.0;
-        self.ball_vx = angle.cos() * if rand::random() { 1.0 } else { -1.0 };
-        self.ball_vy = angle.sin();
+        let dir = if rand::random() { 1.0 } else { -1.0 };
+        self.ball_vx = dir * (0.8 + rand::random::<f32>() * 0.4);
+        self.ball_vy = angle.sin() * 0.6;
         self.speed = 1.0;
     }
 }
@@ -44,6 +47,7 @@ impl Scene for PongGame {
         self.paddle2_y = paddle_center;
         self.score1 = 0; self.score2 = 0; self.speed = 1.0;
         self.game_over = false; self.paused = false;
+        self.ai_timer = 0.0;
         self.reset_ball();
     }
     fn enter(&mut self) { self.paused = false; }
@@ -62,25 +66,50 @@ impl Scene for PongGame {
             self.ball_vy = -self.ball_vy;
             self.ball_y = self.ball_y.max(1.0).min(self.h as f32 - 2.0);
         }
-        if self.ball_x <= 2.0 && self.ball_y >= self.paddle1_y as f32 && self.ball_y <= (self.paddle1_y + 5) as f32 {
+
+        let hw = self.w as f32;
+
+        if self.ball_vx < 0.0 && self.ball_x <= 3.0
+            && self.ball_y >= self.paddle1_y as f32 - 0.5
+            && self.ball_y <= (self.paddle1_y + 5) as f32 + 0.5
+        {
             self.ball_vx = self.ball_vx.abs();
-            self.ball_vy += (self.ball_y - (self.paddle1_y as f32 + 2.5)) * 0.1;
-            self.speed = (self.speed + 0.05).min(3.0);
-            self.ball_x = 3.0;
+            self.ball_vy += (self.ball_y - (self.paddle1_y as f32 + 2.5)) * 0.08;
+            let speed = self.ball_vy.abs().min(2.5);
+            self.ball_vy = self.ball_vy.signum() * speed.max(0.3);
+            self.ball_vx = (self.ball_vx + 0.05).min(2.5);
+            self.speed = (self.speed + 0.03).min(2.5);
+            self.ball_x = 4.0;
         }
-        if self.ball_x >= self.w as f32 - 3.0 && self.ball_y >= self.paddle2_y as f32 && self.ball_y <= (self.paddle2_y + 5) as f32 {
+
+        if self.ball_vx > 0.0 && self.ball_x >= hw - 4.0
+            && self.ball_y >= self.paddle2_y as f32 - 0.5
+            && self.ball_y <= (self.paddle2_y + 5) as f32 + 0.5
+        {
             self.ball_vx = -self.ball_vx.abs();
-            self.ball_vy += (self.ball_y - (self.paddle2_y as f32 + 2.5)) * 0.1;
-            self.speed = (self.speed + 0.05).min(3.0);
-            self.ball_x = self.w as f32 - 4.0;
+            self.ball_vy += (self.ball_y - (self.paddle2_y as f32 + 2.5)) * 0.08;
+            let speed = self.ball_vy.abs().min(2.5);
+            self.ball_vy = self.ball_vy.signum() * speed.max(0.3);
+            self.ball_vx = (self.ball_vx.abs() + 0.05).min(2.5) * -1.0;
+            self.speed = (self.speed + 0.03).min(2.5);
+            self.ball_x = hw - 5.0;
         }
+
         if self.ball_x < 0.0 { self.score2 += 1; if self.score2 >= 5 { self.game_over = true; return; } self.reset_ball(); }
-        if self.ball_x > self.w as f32 { self.score1 += 1; if self.score1 >= 5 { self.game_over = true; return; } self.reset_ball(); }
+        if self.ball_x > hw { self.score1 += 1; if self.score1 >= 5 { self.game_over = true; return; } self.reset_ball(); }
+
         if self.ai {
-            let target = self.ball_y - 2.5;
-            let diff = target - self.paddle2_y as f32;
-            if diff.abs() > 1.0 { self.paddle2_y = (self.paddle2_y as f32 + diff.signum() * diff.abs().min(2.0)) as u16; }
-            self.paddle2_y = self.paddle2_y.clamp(0, self.h.saturating_sub(5));
+            self.ai_timer += dt * self.speed;
+            if self.ball_vx > 0.0 && self.ai_timer >= 0.08 {
+                self.ai_timer = 0.0;
+                let target_y = self.ball_y + (rand::random::<f32>() - 0.5) * 4.0;
+                let diff = target_y - (self.paddle2_y as f32 + 2.5);
+                if diff.abs() > 2.0 {
+                    let step = diff.signum() * diff.abs().min(1.5);
+                    self.paddle2_y = (self.paddle2_y as f32 + step) as u16;
+                }
+                self.paddle2_y = self.paddle2_y.clamp(0, self.h.saturating_sub(5));
+            }
         }
     }
 
