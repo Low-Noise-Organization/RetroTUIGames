@@ -52,43 +52,87 @@ Built by <b>Low Noise</b>.
 ---
 
 ## How it see?
-
-```
-╔══════════════════ RETRO HUB ════════════════════╗
-║  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░    ║
-║                                                 ║
-║               ╔══════════════════╗              ║
-║               ║    RETRO HUB     ║              ║
-║               ╚══════════════════╝              ║
-║                                                 ║
-║                ▶ Pong                           ║ 
-║                  Snake                          ║ 
-║                  Chess                          ║
-║                  Tetris                         ║
-║                  Breakout                       ║
-║                  Minesweeper                    ║
-║                  Sudoku                         ║
-║                  2048                           ║
-║                                                 ║
-║  ↑↓ Navigate  |  Enter Select  |  Esc Exit      ║
-║                                                 ║
-╚═════════════════════════════════════════════════╝
-```
+<img src="assets/images/MainScreen.png" width="220">
 
 ---
 
 ## Games
 
-| Game | Description |
-|---|---|
-| **Pong** | Classic table-tennis. Compete against an AI opponent. First to 5 wins. |
-| **Snake** | Guide the snake to eat food and grow. Speed increases with every apple. |
-| **Chess** | Full chess engine with AI opponent, legal move generation, check/checkmate detection, and move history. |
-| **Tetris** | Stack falling tetrominoes. Hold piece, next-queue preview, ghost piece, and scoring. |
-| **Breakout** | Break all the bricks with a bouncing ball. Power-ups include wider paddle, multi-ball, and extra lives. |
-| **Minesweeper** | Classic minesweeper with 5 difficulty levels, flag mode, and timer. |
-| **Sudoku** | 9×9 Sudoku with pencil marks, hints, timer, and new-puzzle generation. |
-| **2048** | Slide tiles to merge them and reach the 2048 tile. Undo support. |
+<table>
+<tr>
+<td align="center" width="25%">
+
+<img src="assets/images/PongGameScreen.png" width="220">
+
+### Pong
+
+Classic table-tennis. Compete against an AI opponent.
+
+</td>
+
+<td align="center" width="25%">
+
+<img src="assets/images/SnakeGameScreen.png" width="220">
+
+### Snake
+
+Eat apples, grow longer and survive.
+
+</td>
+
+<td align="center" width="25%">
+
+<img src="assets/images/TetrisGameScreen.png" width="220">
+
+### Tetris
+
+Stack tetrominoes and clear lines.
+
+</td>
+</tr>
+
+<tr>
+<td align="center">
+
+<img src="assets/images/BreakoutGameScreen.png" width="220">
+
+### Breakout
+
+Destroy all the bricks.
+
+</td>
+
+<td align="center">
+
+<img src="assets/images/MinesweeperGameScreen.png" width="220">
+
+### Minesweeper
+
+Five difficulty levels.
+
+</td>
+
+<td align="center">
+
+<img src="assets/images/SudokuGameScreen.png" width="220">
+
+### Sudoku
+
+Generate and solve puzzles.
+
+</td>
+
+<td align="center">
+
+<img src="assets/images/2048GameScreen.png" width="220">
+
+### 2048
+
+Reach the 2048 tile.
+
+</td>
+</tr>
+</table>
 
 ---
 
