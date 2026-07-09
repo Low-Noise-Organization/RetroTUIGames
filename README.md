@@ -1,7 +1,11 @@
-
-<source media="(prefers-color-scheme: dark)" srcset="/assets/images/RetroTUI_Logo.png" width="100">
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="/assets/images/RetroTUI_Logo.png" width="400">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/images/Low_Noise_Logo.png" width="100">
+  <img src="assets/images/Low_Noise_Logo.png" alt="RETRO HUB Logo" width="600">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/images/RetroTUI_Logo.png" width="400">
+  <img src="assets/images/Low_Noise_Logo.png" alt="RETRO HUB Logo" width="600">
 </picture>
 
 # RETRO HUB
