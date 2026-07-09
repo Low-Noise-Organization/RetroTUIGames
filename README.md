@@ -1,22 +1,9 @@
-<table>
-<tr>
-<td align="left" width="15%">
-<img src="assets/images/Low_Noise_Logo.png" width="80">
-</td>
-
-<td align="center">
-
-<img src="assets/images/RetroTUI_Logo.png" width="400">
-
-</td>
-</tr>
-</table>
-
-<h1 align="center">RetroTUI Games</h1>
-
-<p align="center">
-A retro gaming arcade machine inside your terminal.
-</p>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/images/RetroTUI_Logo.png">
+  <img src="assets/images/RetroTUI_Logo.png"
+       alt="RetroTUI Games"
+       width="400">
+</picture>
 
 # RETRO HUB
 
