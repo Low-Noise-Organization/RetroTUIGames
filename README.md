@@ -1,14 +1,22 @@
-<p align="left">
-  <img src="assets/images/Low_Noise_Logo.png"
-       alt="Low Noise"
-       width="90">
-</p>
+<table width="100%">
+<tr>
+<td align="left" valign="top" width="15%">
 
-<p align="center">
-  <img src="assets/images/RetroTUI_Logo.png"
-       alt="RetroTUI Games"
-       width="400">
-</p>
+<img src="assets/images/Low_Noise_Logo.png"
+     alt="Low Noise"
+     width="90">
+
+</td>
+
+<td align="center" valign="top">
+
+<img src="assets/images/RetroTUI_Logo.png"
+     alt="RetroTUI Games"
+     width="700">
+
+</td>
+</tr>
+</table>
 
 <h1 align="center">
 RetroTUI Games
@@ -19,11 +27,8 @@ RetroTUI Games
 </p>
 
 <p align="center">
-
-Minimal. Fast. Native. Terminal.
-
+Minimal. Fast. Native. Terminal.<br>
 Built by <b>Low Noise</b>.
-
 </p>
 
 # RETRO HUB
