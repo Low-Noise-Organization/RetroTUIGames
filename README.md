@@ -1,6 +1,6 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/Low-Noise-Organization/RetroTUIGames/main/assets/images/RetroTUI_Logo.png">
-  <img src="https://github.com/Low-Noise-Organization/RetroTUIGames/main/assets/images/Low_Noise_Logo.png" alt="RETRO HUB Logo" width="600">
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/Low-Noise-Organization/RetroTUIGames/assets/images/RetroTUI_Logo.png">
+  <img src="https://github.com/Low-Noise-Organization/RetroTUIGames/assets/images/Low_Noise_Logo.png" alt="RETRO HUB Logo" width="600">
 </picture>
 
 # RETRO HUB
